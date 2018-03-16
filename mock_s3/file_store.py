@@ -1,11 +1,11 @@
-import ConfigParser
-import md5
+import configparser
+import hashlib
 import os
 import shutil
 from datetime import datetime
 
-from errors import BucketNotEmpty, NoSuchBucket
-from models import Bucket, BucketQuery, S3Item
+from .errors import BucketNotEmpty, NoSuchBucket
+from .models import Bucket, BucketQuery, S3Item
 
 
 CONTENT_FILE = '.mocks3_content'
@@ -66,7 +66,7 @@ class FileStore(object):
         for root, dirs, files in os.walk(os.path.join(self.root, bucket.name)):
             pattern = os.path.join(self.root, bucket.name, kwargs['prefix'])
             if root.startswith(pattern) and METADATA_FILE in files:
-                config = ConfigParser.RawConfigParser()
+                config = configparser.RawConfigParser()
                 files_parsed = config.read(os.path.join(root, METADATA_FILE))
                 metadata = {}
                 if files_parsed:
@@ -92,7 +92,7 @@ class FileStore(object):
         metafile = os.path.join(dirname, METADATA_FILE)
 
         metadata = {}
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         files_parsed = config.read(metafile)
         if files_parsed:
             metadata['size'] = config.getint('metadata', 'size')
@@ -128,7 +128,7 @@ class FileStore(object):
         shutil.copy(src_filename, filename)
         shutil.copy(src_metafile, metafile)
 
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         files_parsed = config.read(metafile)
         metadata = {}
         if files_parsed:
@@ -148,7 +148,7 @@ class FileStore(object):
         metafile = os.path.join(dirname, METADATA_FILE)
 
         metadata = {}
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         files_parsed = config.read(metafile)
         if files_parsed:
             metadata['size'] = config.getint('metadata', 'size')
@@ -157,7 +157,7 @@ class FileStore(object):
             metadata['content_type'] = config.get('metadata', 'content_type')
             metadata['creation_date'] = config.get('metadata', 'creation_date')
 
-        m = md5.new()
+        m = hashlib.md5()
 
         lower_headers = {}
         for key in headers:
@@ -208,7 +208,7 @@ class FileStore(object):
         metafile = os.path.join(dirname, METADATA_FILE)
 
         metadata = {}
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         files_parsed = config.read(metafile)
         if files_parsed:
             metadata['size'] = config.getint('metadata', 'size')
@@ -217,7 +217,7 @@ class FileStore(object):
             metadata['content_type'] = config.get('metadata', 'content_type')
             metadata['creation_date'] = config.get('metadata', 'creation_date')
 
-        m = md5.new()
+        m = hashlib.md5()
 
         headers = {}
         for key in handler.headers:

@@ -2,13 +2,13 @@ import argparse
 import logging
 import os
 import sys
-import urlparse
+import urllib.parse
 import xml.etree.ElementTree as ET
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from SocketServer import ThreadingMixIn
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
 
-from actions import delete_item, delete_items, get_acl, get_item, list_buckets, ls_bucket
-from file_store import FileStore
+from .actions import delete_item, delete_items, get_acl, get_item, list_buckets, ls_bucket
+from .file_store import FileStore
 
 
 logging.basicConfig(level=logging.INFO)
@@ -16,8 +16,8 @@ logging.basicConfig(level=logging.INFO)
 
 class S3Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        parsed_path = urlparse.urlparse(self.path)
-        qs = urlparse.parse_qs(parsed_path.query, True)
+        parsed_path = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
         path = parsed_path.path
         bucket_name = None
@@ -61,11 +61,11 @@ class S3Handler(BaseHTTPRequestHandler):
             get_item(self, bucket_name, item_name)
 
         else:
-            self.wfile.write('%s: [%s] %s' % (req_type, bucket_name, item_name))
+            self.wfile.write(bytes('%s: [%s] %s' % (req_type, bucket_name, item_name), "utf-8"))
 
     def do_DELETE(self):
-        parsed_path = urlparse.urlparse(self.path)
-        qs = urlparse.parse_qs(parsed_path.query, True)
+        parsed_path = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
         path = parsed_path.path
         bucket_name = None
@@ -84,7 +84,7 @@ class S3Handler(BaseHTTPRequestHandler):
         if bucket_name and item_name:
             delete_item(self, bucket_name, item_name)
         else:
-            self.wfile.write('%s: [%s] %s' % ('DELETE', bucket_name, item_name))
+            self.wfile.write(bytes('%s: [%s] %s' % ('DELETE', bucket_name, item_name), "utf-8"))
 
         self.send_response(204)
         self.send_header('Content-Length', '0')
@@ -94,8 +94,8 @@ class S3Handler(BaseHTTPRequestHandler):
         return self.do_GET()
 
     def do_POST(self):
-        parsed_path = urlparse.urlparse(self.path)
-        qs = urlparse.parse_qs(parsed_path.query, True)
+        parsed_path = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
         path = parsed_path.path
         bucket_name = None
@@ -128,11 +128,11 @@ class S3Handler(BaseHTTPRequestHandler):
                 keys.append(obj.find('Key').text)
             delete_items(self, bucket_name, keys)
         else:
-            self.wfile.write('%s: [%s] %s' % (req_type, bucket_name, item_name))
+            self.wfile.write(bytes('%s: [%s] %s' % (req_type, bucket_name, item_name), "utf-8"))
 
     def do_PUT(self):
-        parsed_path = urlparse.urlparse(self.path)
-        qs = urlparse.parse_qs(parsed_path.query, True)
+        parsed_path = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
         path = parsed_path.path
         bucket_name = None
@@ -220,7 +220,7 @@ def main(argv=sys.argv[1:]):
     server.set_mock_hostname(args.hostname)
     server.set_pull_from_aws(args.pull_from_aws)
 
-    print 'Starting server, use <Ctrl-C> to stop'
+    print('Starting server, use <Ctrl-C> to stop')
     server.serve_forever()
 
 
