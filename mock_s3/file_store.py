@@ -4,8 +4,8 @@ import os
 import shutil
 from datetime import datetime
 
-from .errors import BucketNotEmpty, NoSuchBucket
-from .models import Bucket, BucketQuery, S3Item
+from errors import BucketNotEmpty, NoSuchBucket
+from models import Bucket, BucketQuery, S3Item
 
 
 CONTENT_FILE = '.mocks3_content'
@@ -67,7 +67,7 @@ class FileStore(object):
             pattern = os.path.join(self.root, bucket.name, kwargs['prefix'])
             if root.startswith(pattern) and METADATA_FILE in files:
                 config = configparser.RawConfigParser()
-                files_parsed = config.read(os.path.join(root, METADATA_FILE))
+                files_parsed = config.read(os.path.join(root, METADATA_FILE), encoding="utf-8-sig")
                 metadata = {}
                 if files_parsed:
                     metadata['size'] = config.getint('metadata', 'size')
@@ -93,7 +93,7 @@ class FileStore(object):
 
         metadata = {}
         config = configparser.RawConfigParser()
-        files_parsed = config.read(metafile)
+        files_parsed = config.read(metafile, encoding="utf-8-sig")
         if files_parsed:
             metadata['size'] = config.getint('metadata', 'size')
             metadata['md5'] = config.get('metadata', 'md5')
@@ -129,7 +129,7 @@ class FileStore(object):
         shutil.copy(src_metafile, metafile)
 
         config = configparser.RawConfigParser()
-        files_parsed = config.read(metafile)
+        files_parsed = config.read(metafile, encoding="utf-8-sig")
         metadata = {}
         if files_parsed:
             metadata['size'] = config.getint('metadata', 'size')
@@ -149,13 +149,13 @@ class FileStore(object):
 
         metadata = {}
         config = configparser.RawConfigParser()
-        files_parsed = config.read(metafile)
-        if files_parsed:
-            metadata['size'] = config.getint('metadata', 'size')
-            metadata['md5'] = config.get('metadata', 'md5')
-            metadata['filename'] = config.get('metadata', 'filename')
-            metadata['content_type'] = config.get('metadata', 'content_type')
-            metadata['creation_date'] = config.get('metadata', 'creation_date')
+        # files_parsed = config.read(metafile)
+        # if files_parsed:
+        #     metadata['size'] = config.getint('metadata', 'size')
+        #     metadata['md5'] = config.get('metadata', 'md5')
+        #     metadata['filename'] = config.get('metadata', 'filename')
+        #     metadata['content_type'] = config.get('metadata', 'content_type')
+        #     metadata['creation_date'] = config.get('metadata', 'creation_date')
 
         m = hashlib.md5()
 
@@ -194,7 +194,7 @@ class FileStore(object):
         config.set('metadata', 'creation_date', metadata['creation_date'])
         if 'modified_date' in metadata:
             config.set('metadata', 'modified_date', metadata['modified_date'])
-        with open(metafile, 'wb') as configfile:
+        with open(metafile, 'w') as configfile:
             config.write(configfile)
 
         s3_item = S3Item(key, **metadata)
@@ -209,13 +209,13 @@ class FileStore(object):
 
         metadata = {}
         config = configparser.RawConfigParser()
-        files_parsed = config.read(metafile)
-        if files_parsed:
-            metadata['size'] = config.getint('metadata', 'size')
-            metadata['md5'] = config.get('metadata', 'md5')
-            metadata['filename'] = config.get('metadata', 'filename')
-            metadata['content_type'] = config.get('metadata', 'content_type')
-            metadata['creation_date'] = config.get('metadata', 'creation_date')
+        # files_parsed = config.read(metafile)
+        # if files_parsed:
+        #     metadata['size'] = config.getint('metadata', 'size')
+        #     metadata['md5'] = config.get('metadata', 'md5')
+        #     metadata['filename'] = config.get('metadata', 'filename')
+        #     metadata['content_type'] = config.get('metadata', 'content_type')
+        #     metadata['creation_date'] = config.get('metadata', 'creation_date')
 
         m = hashlib.md5()
 
@@ -255,7 +255,7 @@ class FileStore(object):
         config.set('metadata', 'creation_date', metadata['creation_date'])
         if 'modified_date' in metadata:
             config.set('metadata', 'modified_date', metadata['modified_date'])
-        with open(metafile, 'wb') as configfile:
+        with open(metafile, 'w') as configfile:
             config.write(configfile)
         return S3Item(key, **metadata)
 

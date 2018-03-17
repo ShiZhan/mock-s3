@@ -7,8 +7,8 @@ import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
-from .actions import delete_item, delete_items, get_acl, get_item, list_buckets, ls_bucket
-from .file_store import FileStore
+from actions import delete_item, delete_items, get_acl, get_item, list_buckets, ls_bucket
+from file_store import FileStore
 
 
 logging.basicConfig(level=logging.INFO)

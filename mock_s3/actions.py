@@ -1,7 +1,7 @@
 import urllib.request, urllib.error, urllib.parse
 import datetime
 
-from . import xml_templates
+import xml_templates
 
 
 def list_buckets(handler):
