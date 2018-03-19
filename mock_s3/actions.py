@@ -95,7 +95,7 @@ def get_item(handler, bucket_name, item_name):
         handler.send_header('Content-Length', '%s' % bytes_to_read)
         handler.end_headers()
         item.io.seek(start)
-        handler.wfile.write(bytes(item.io.read(bytes_to_read), "utf-8"))
+        handler.wfile.write(item.io.read(bytes_to_read))
         return
 
     handler.send_response(200)
@@ -106,7 +106,7 @@ def get_item(handler, bucket_name, item_name):
     handler.send_header('Content-Length', content_length)
     handler.end_headers()
     if handler.command == 'GET':
-        handler.wfile.write(bytes(item.io.read(), "utf-8"))
+        handler.wfile.write(item.io.read())
 
 
 def delete_item(handler, bucket_name, item_name):
