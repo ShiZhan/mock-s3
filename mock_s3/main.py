@@ -1,6 +1,5 @@
 import argparse
 import logging
-import os
 import sys
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -9,7 +8,7 @@ from socketserver import ThreadingMixIn
 
 from actions import delete_item, delete_items, get_acl, get_item, list_buckets, ls_bucket
 from file_store import FileStore
-
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
@@ -208,7 +207,7 @@ def main(argv=sys.argv[1:]):
                         default=10001, type=int,
                         help='Port to run server on.')
     parser.add_argument('--root', dest='root', action='store',
-                        default='%s/s3store' % os.environ['HOME'],
+                        default='%s/s3store' % str(Path.home()),
                         help='Defaults to $HOME/s3store.')
     parser.add_argument('--pull-from-aws', dest='pull_from_aws', action='store_true',
                         default=False,
