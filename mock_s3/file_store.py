@@ -271,6 +271,6 @@ class FileStore(object):
 
     def delete_item(self, bucket_name, item_name):
         # dirname = os.path.join(self.root, bucket_name, item_name)
-        dirname = os.path.join(self.root, unquote(item_name).strip('\\'))
+        dirname = os.path.join(self.root, unquote(item_name).strip('\\').strip('/'))
         shutil.rmtree(dirname, ignore_errors=True)
         # shutil.rmtree(dirname)

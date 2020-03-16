@@ -47,8 +47,6 @@ class S3Handler(BaseHTTPRequestHandler):
                 else:
                     req_type = 'get'
 
-        print("GET: " + path + ", " + bucket_name + ", " + item_name)
-
         if req_type == 'list_buckets':
             list_buckets(self)
 
@@ -81,8 +79,6 @@ class S3Handler(BaseHTTPRequestHandler):
             bucket_name, sep, item_name = path.strip('/').partition('/')
         else:
             item_name = path.strip('/')
-
-        print("DEL: " + path + ", " + bucket_name + ", " + item_name)
 
         if bucket_name:
             if item_name:
@@ -125,8 +121,6 @@ class S3Handler(BaseHTTPRequestHandler):
             if not item_name and 'delete' in qs:
                 req_type = 'delete_keys'
 
-        print("POS: " + path + ", " + bucket_name + ", " + item_name)
-
         if req_type == 'delete_keys':
             size = int(self.headers['content-length'])
             data = self.rfile.read(size)
@@ -168,8 +162,6 @@ class S3Handler(BaseHTTPRequestHandler):
                     req_type = 'set_acl'
                 else:
                     req_type = 'store'
-
-        print("PUT: " + path + ", " + bucket_name + ", " + item_name)
 
         if 'x-amz-copy-source' in self.headers:
             copy_source = self.headers['x-amz-copy-source']
