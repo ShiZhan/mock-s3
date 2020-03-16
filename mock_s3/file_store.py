@@ -82,7 +82,7 @@ class FileStore(object):
                         metadata['modified_date'] = config.get('metadata', 'modified_date')
 
                 actual_key = root.replace(self.root, '', 1)
-                actual_key = actual_key.replace('/' + bucket.name + '/', '')
+                actual_key = actual_key.replace(os.sep + bucket.name + os.sep, '')
                 matches.append(S3Item(actual_key, **metadata))
                 if len(matches) >= max_keys:
                     is_truncated = True
@@ -271,6 +271,6 @@ class FileStore(object):
 
     def delete_item(self, bucket_name, item_name):
         # dirname = os.path.join(self.root, bucket_name, item_name)
-        dirname = os.path.join(self.root, unquote(item_name).strip('\\').strip('/'))
+        dirname = os.path.join(self.root, bucket_name, unquote(item_name).strip(os.sep))
         shutil.rmtree(dirname, ignore_errors=True)
         # shutil.rmtree(dirname)
