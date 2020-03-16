@@ -49,19 +49,8 @@ def get_acl(handler):
     handler.wfile.write(bytes(xml_templates.acl_xml, "utf-8"))
 
 
-def load_from_aws(handler, bucket_name, item_name):
-    bucket = handler.server.file_store.get_bucket(bucket_name)
-    aws_url = "http://s3.amazonaws.com/%s/%s" % (bucket_name, item_name)
-    response = urllib.request.urlopen(aws_url)
-    data = response.read()
-    response_headers = response.info()
-    return handler.server.file_store.store_data(bucket, item_name, response_headers, data)
-
-
 def get_item(handler, bucket_name, item_name):
     item = handler.server.file_store.get_item(bucket_name, item_name)
-    if not item and handler.server.pull_from_aws:
-            item = load_from_aws(handler, bucket_name, item_name)
     if not item:
         handler.send_response(404, '')
         return
@@ -123,3 +112,6 @@ def delete_items(handler, bucket_name, keys):
         xml += xml_templates.deleted_deleted_xml.format(key=key)
     xml = xml_templates.deleted_xml.format(contents=xml)
     handler.wfile.write(bytes(xml, "utf-8"))
+
+def delete_bucket(handler, bucket_name):
+    handler.server.file_store.delete_bucket(bucket_name)

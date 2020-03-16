@@ -3,6 +3,7 @@ import hashlib
 import os
 import shutil
 from datetime import datetime
+from urllib.parse import unquote
 
 from errors import BucketNotEmpty, NoSuchBucket
 from models import Bucket, BucketQuery, S3Item
@@ -18,6 +19,9 @@ class FileStore(object):
         if not os.path.exists(self.root):
             os.makedirs(self.root)
         self.buckets = self.get_all_buckets()
+
+    def _pre_exit(self):
+        print("clean up")
 
     def get_bucket_folder(self, bucket_name):
         return os.path.join(self.root, bucket_name)
@@ -149,13 +153,16 @@ class FileStore(object):
 
         metadata = {}
         config = configparser.RawConfigParser()
-        # files_parsed = config.read(metafile)
-        # if files_parsed:
-        #     metadata['size'] = config.getint('metadata', 'size')
-        #     metadata['md5'] = config.get('metadata', 'md5')
-        #     metadata['filename'] = config.get('metadata', 'filename')
-        #     metadata['content_type'] = config.get('metadata', 'content_type')
-        #     metadata['creation_date'] = config.get('metadata', 'creation_date')
+        try:
+            files_parsed = config.read(metafile)
+            if files_parsed:
+                metadata['size'] = config.getint('metadata', 'size')
+                metadata['md5'] = config.get('metadata', 'md5')
+                metadata['filename'] = config.get('metadata', 'filename')
+                metadata['content_type'] = config.get('metadata', 'content_type')
+                metadata['creation_date'] = config.get('metadata', 'creation_date')
+        except Exception as e:
+            print(e)
 
         m = hashlib.md5()
 
@@ -209,14 +216,17 @@ class FileStore(object):
 
         metadata = {}
         config = configparser.RawConfigParser()
-        # files_parsed = config.read(metafile)
-        # if files_parsed:
-        #     metadata['size'] = config.getint('metadata', 'size')
-        #     metadata['md5'] = config.get('metadata', 'md5')
-        #     metadata['filename'] = config.get('metadata', 'filename')
-        #     metadata['content_type'] = config.get('metadata', 'content_type')
-        #     metadata['creation_date'] = config.get('metadata', 'creation_date')
-
+        try:
+            files_parsed = config.read(metafile)
+            if files_parsed:
+                metadata['size'] = config.getint('metadata', 'size')
+                metadata['md5'] = config.get('metadata', 'md5')
+                metadata['filename'] = config.get('metadata', 'filename')
+                metadata['content_type'] = config.get('metadata', 'content_type')
+                metadata['creation_date'] = config.get('metadata', 'creation_date')
+        except Exception as e:
+            print(e)
+    
         m = hashlib.md5()
 
         headers = {}
@@ -260,5 +270,7 @@ class FileStore(object):
         return S3Item(key, **metadata)
 
     def delete_item(self, bucket_name, item_name):
-        dirname = os.path.join(self.root, bucket_name, item_name)
+        # dirname = os.path.join(self.root, bucket_name, item_name)
+        dirname = os.path.join(self.root, unquote(item_name).strip('\\'))
         shutil.rmtree(dirname, ignore_errors=True)
+        # shutil.rmtree(dirname)
