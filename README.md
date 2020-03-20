@@ -6,13 +6,13 @@ A python port of Fake-S3.
 
 ```Bash
 python setup.py install
-mock_s3 --host 127.0.0.1 --port 9000 --root ./root
+mock_s3 --hostname 0.0.0.0 --port 9000 --root ./root
 ```
 
 # Option 2: Run directly
 
 ```Bash
 cd mock_s3
-python main.py --host 127.0.0.1 --port 9000 --root ./root
+python main.py --hostname 0.0.0.0 --port 9000 --root ./root
 ```
 
