@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 import xml.etree.ElementTree as ET
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
@@ -18,7 +18,7 @@ class S3Handler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         qs = parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
-        path = parsed_path.path
+        path = unquote(parsed_path.path)
         bucket_name = None
         item_name = None
         req_type = None
@@ -66,7 +66,7 @@ class S3Handler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         qs = parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
-        path = parsed_path.path
+        path = unquote(parsed_path.path)
         bucket_name = None
         item_name = None
 
@@ -99,7 +99,7 @@ class S3Handler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         qs = parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
-        path = parsed_path.path
+        path = unquote(parsed_path.path)
         bucket_name = None
         item_name = None
         req_type = None
@@ -136,7 +136,7 @@ class S3Handler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         qs = parse_qs(parsed_path.query, True)
         host = self.headers['host'].split(':')[0]
-        path = parsed_path.path
+        path = unquote(parsed_path.path)
         bucket_name = None
         item_name = None
         req_type = None

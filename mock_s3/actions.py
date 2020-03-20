@@ -1,7 +1,5 @@
 import urllib.request, urllib.error, urllib.parse
 import datetime
-import os
-from urllib.parse import unquote
 
 import xml_templates
 
@@ -19,7 +17,7 @@ def list_buckets(handler):
 
 
 def ls_bucket(handler, bucket_name, qs):
-    bucket = handler.server.file_store.get_bucket(unquote(bucket_name))
+    bucket = handler.server.file_store.get_bucket(bucket_name)
     if bucket:
         kwargs = {
             'marker': qs.get('marker', [''])[0],
@@ -52,7 +50,7 @@ def get_acl(handler):
 
 
 def get_item(handler, bucket_name, item_name):
-    item = handler.server.file_store.get_item(unquote(bucket_name), unquote(item_name))
+    item = handler.server.file_store.get_item(bucket_name, item_name)
     if not item:
         handler.send_response(404, '')
         return
@@ -101,7 +99,7 @@ def get_item(handler, bucket_name, item_name):
 
 
 def delete_item(handler, bucket_name, item_name):
-    handler.server.file_store.delete_item(unquote(bucket_name).strip(os.sep), unquote(item_name))
+    handler.server.file_store.delete_item(bucket_name, item_name)
 
 
 def delete_items(handler, bucket_name, keys):
@@ -115,5 +113,6 @@ def delete_items(handler, bucket_name, keys):
     xml = xml_templates.deleted_xml.format(contents=xml)
     handler.wfile.write(bytes(xml, "utf-8"))
 
+
 def delete_bucket(handler, bucket_name):
-    handler.server.file_store.delete_bucket(unquote(bucket_name))
+    handler.server.file_store.delete_bucket(bucket_name)
