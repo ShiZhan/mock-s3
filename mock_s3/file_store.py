@@ -3,7 +3,6 @@ import hashlib
 import os
 import shutil
 from datetime import datetime
-from urllib.parse import unquote
 
 from errors import BucketNotEmpty, NoSuchBucket
 from models import Bucket, BucketQuery, S3Item
@@ -270,7 +269,5 @@ class FileStore(object):
         return S3Item(key, **metadata)
 
     def delete_item(self, bucket_name, item_name):
-        # dirname = os.path.join(self.root, bucket_name, item_name)
-        dirname = os.path.join(self.root, bucket_name, unquote(item_name).strip(os.sep))
+        dirname = os.path.join(self.root, bucket_name, item_name)
         shutil.rmtree(dirname, ignore_errors=True)
-        # shutil.rmtree(dirname)
