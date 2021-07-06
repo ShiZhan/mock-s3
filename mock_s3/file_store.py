@@ -60,7 +60,8 @@ class FileStore(object):
             self.buckets = self.get_all_buckets()
         except:
             # TODO: for now assume exception is directory is not empty
-            raise BucketNotEmpty
+            print("directory deletion error")
+            # raise BucketNotEmpty
 
     def get_all_keys(self, bucket, **kwargs):
         max_keys = int(kwargs['max_keys'])
