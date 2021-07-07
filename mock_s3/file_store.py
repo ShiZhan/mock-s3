@@ -56,11 +56,12 @@ class FileStore(object):
         if not bucket:
             raise NoSuchBucket
         try:
-            os.rmdir(os.path.join(self.root, bucket_name))
+            p = os.path.join(self.root, bucket_name)
+            shutil.rmtree(p)
             self.buckets = self.get_all_buckets()
-        except:
+        except OSError as e:
             # TODO: for now assume exception is directory is not empty
-            print("directory deletion error")
+            print("Error: %s, %s" % (e, p, ))
             # raise BucketNotEmpty
 
     def get_all_keys(self, bucket, **kwargs):
