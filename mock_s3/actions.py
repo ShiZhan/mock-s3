@@ -107,9 +107,12 @@ def delete_items(handler, bucket_name, keys):
     handler.send_header('Content-Type', 'application/xml')
     handler.end_headers()
     xml = ''
-    for key in keys:
-        delete_item(handler, bucket_name, key)
-        xml += xml_templates.deleted_deleted_xml.format(key=key)
+    if keys:
+        for key in keys:
+            delete_item(handler, bucket_name, key)
+            xml += xml_templates.deleted_deleted_xml.format(key=key)
+    else:
+        handler.server.file_store.delete_items(bucket_name)
     xml = xml_templates.deleted_xml.format(contents=xml)
     handler.wfile.write(bytes(xml, "utf-8"))
 

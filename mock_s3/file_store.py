@@ -56,13 +56,11 @@ class FileStore(object):
         if not bucket:
             raise NoSuchBucket
         try:
-            p = os.path.join(self.root, bucket_name)
-            shutil.rmtree(p)
+            os.rmdir(os.path.join(self.root, bucket_name))
             self.buckets = self.get_all_buckets()
         except OSError as e:
             # TODO: for now assume exception is directory is not empty
-            print("Error: %s, %s" % (e, p, ))
-            # raise BucketNotEmpty
+            raise BucketNotEmpty
 
     def get_all_keys(self, bucket, **kwargs):
         max_keys = int(kwargs['max_keys'])
@@ -273,3 +271,8 @@ class FileStore(object):
     def delete_item(self, bucket_name, item_name):
         dirname = os.path.join(self.root, bucket_name, item_name)
         shutil.rmtree(dirname, ignore_errors=True)
+
+    def delete_items(self, bucket_name):
+        dirname = os.path.join(self.root, bucket_name)
+        for item in os.listdir(dirname):
+            shutil.rmtree(os.path.join(dirname, item), ignore_errors=True)
